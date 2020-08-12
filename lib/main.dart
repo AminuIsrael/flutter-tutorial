@@ -6,34 +6,53 @@ void main() {
     title: "Exploring UI widgets",
     home: Scaffold(
       appBar: AppBar(
-        title: Text("Basic List View"),
+        title: Text("Long List"),
       ),
       body: getListView(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          debugPrint("FAB button clicked");
+        },
+        child: Icon(Icons.add),
+        tooltip: 'Add One more Item',
+      ),
     ),
   ));
 }
 
-Widget getListView() {
-  var listView = ListView(
-    children: [
-      ListTile(
-        leading: Icon(Icons.landscape),
-        title: Text("Landscape"),
-        subtitle: Text("Beautiful View!"),
-        trailing: Icon(Icons.wb_sunny),
-        onTap: () {
-          debugPrint("LandScape Typed");
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.laptop_chromebook),
-        title: Text("Windows"),
-      ),
-      ListTile(
-        leading: Icon(Icons.phone),
-        title: Text("Phone"),
-      )
-    ],
+void showSnackBar(BuildContext context, String item) {
+  var snackBar = SnackBar(
+    content: Text("You just tapped $item"),
+    action: SnackBarAction(
+      label: "UNDO",
+      onPressed: () {
+        debugPrint("Performing dummy UND Operation");
+      },
+    ),
   );
+  Scaffold.of(context).showSnackBar(snackBar);
+}
+
+List<String> getListElements() {
+  var items = List.generate(1000, (counter) => "Item $counter");
+  return items;
+}
+
+Widget getListView() {
+  var listItems = getListElements();
+
+  var listView = ListView.builder(itemBuilder: (context, index) {
+    return ListTile(
+      leading: Icon(Icons.arrow_right),
+      title: Text(listItems[index]),
+      onTap: () {
+        showSnackBar(context, listItems[index]);
+      },
+      onLongPress: () {
+        debugPrint("Was held");
+      },
+    );
+  });
+
   return listView;
 }
