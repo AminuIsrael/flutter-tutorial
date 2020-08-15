@@ -1,58 +1,63 @@
 import 'package:flutter/material.dart';
-import './app_screens/home.dart';
 
 void main() {
-  runApp(MaterialApp(
-    title: "Exploring UI widgets",
-    home: Scaffold(
+  runApp(MaterialApp(title: "Stateful App Example", home: FavouriteCity()));
+}
+
+class FavouriteCity extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _FavouriteCityState();
+  }
+}
+
+class _FavouriteCityState extends State<FavouriteCity> {
+  String nameCity = "";
+  var _currencies = ["Naira", "Dollar", "Pounds"];
+  var _currentItemSelected = "yen";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
-        title: Text("Long List"),
+        title: Text("Stateful App Example"),
       ),
-      body: getListView(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          debugPrint("FAB button clicked");
-        },
-        child: Icon(Icons.add),
-        tooltip: 'Add One more Item',
+      body: Container(
+        margin: EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            TextField(
+              onSubmitted: (String userInput) {
+                setState(() {
+                  nameCity = userInput;
+                });
+              },
+            ),
+            DropdownButton<String>(
+              items: _currencies.map((String dropDownStringItem) {
+                return DropdownMenuItem<String>(
+                  value: dropDownStringItem,
+                  child: Text(dropDownStringItem),
+                );
+              }).toList(),
+              onChanged: (String newValueSelected) {
+                _ondropDownItemSelected(newValueSelected);
+              },
+              value: _currentItemSelected,
+            ),
+            Padding(
+              padding: EdgeInsets.all(30),
+              child: Text("Your best city is $nameCity"),
+            )
+          ],
+        ),
       ),
-    ),
-  ));
-}
-
-void showSnackBar(BuildContext context, String item) {
-  var snackBar = SnackBar(
-    content: Text("You just tapped $item"),
-    action: SnackBarAction(
-      label: "UNDO",
-      onPressed: () {
-        debugPrint("Performing dummy UND Operation");
-      },
-    ),
-  );
-  Scaffold.of(context).showSnackBar(snackBar);
-}
-
-List<String> getListElements() {
-  var items = List.generate(1000, (counter) => "Item $counter");
-  return items;
-}
-
-Widget getListView() {
-  var listItems = getListElements();
-
-  var listView = ListView.builder(itemBuilder: (context, index) {
-    return ListTile(
-      leading: Icon(Icons.arrow_right),
-      title: Text(listItems[index]),
-      onTap: () {
-        showSnackBar(context, listItems[index]);
-      },
-      onLongPress: () {
-        debugPrint("Was held");
-      },
     );
-  });
+  }
 
-  return listView;
+  void _ondropDownItemSelected(String newValueSelected) {
+    setState(() {
+      this._currentItemSelected = newValueSelected;
+    });
+  }
 }
